@@ -17,3 +17,4 @@ dependencyResolutionManagement {
 rootProject.name = "Organize"
 include(":app")
 include(":core")
+include(":screen:splash")
