@@ -43,6 +43,9 @@ dependencies {
     api(libs.core.ktx)
 
     api(libs.lifecycle.runtime.ktx)
+    api(libs.lifecycle.runtime.compose)
+    api(libs.lifecycle.viewmodel.ktx)
+    api(libs.lifecycle.viewmodel.compose)
 
     api(platform(libs.compose.bom))
     api(libs.ui)
@@ -54,4 +57,9 @@ dependencies {
     debugApi(libs.ui.tooling)
 
     api(libs.activity.compose)
+    api(libs.navigation.compose)
+
+    api(libs.koin.core)
+    api(libs.koin.android)
+    api(libs.koin.compose)
 }
