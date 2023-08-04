@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Организуй-Ка!</string>
+
+    <string name="tasks">Задачи</string>
+    <string name="notes">Заметки</string>
+    <string name="plans">Планы</string>
+    <string name="habits">Привычки</string>
+    <string name="settings">Настройки</string>
+
+    <string name="your_to_do_planner">Планировщик твоих дел</string>
+</resources>

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Organize" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Organize" parent="Theme.SplashScreen">
+<!--        <item name="windowSplashScreenBackground">#FF1D2126</item>-->
+<!--        <item name="windowSplashScreenAnimatedIcon">@drawable/img_bot</item>-->
+<!--        <item name="windowSplashScreenAnimationDuration">100</item>-->
+    </style>
 </resources>
