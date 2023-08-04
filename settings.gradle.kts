@@ -18,3 +18,4 @@ rootProject.name = "Organize"
 include(":app")
 include(":core")
 include(":screen:splash")
+include(":screen:tasks")
