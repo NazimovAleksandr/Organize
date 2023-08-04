@@ -22,6 +22,8 @@ private val darkColorScheme = darkColorScheme(
 private val lightColorScheme = lightColorScheme(
     background = SecondaryWhite,
     onBackground = PrimaryText,
+    surface = PrimaryBlue,
+    onSurface = SecondaryWhite,
 )
 
 @Composable
