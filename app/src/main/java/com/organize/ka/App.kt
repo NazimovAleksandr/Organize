@@ -1,6 +1,7 @@
 package com.organize.ka
 
 import android.app.Application
+import com.organize.ka.di.screenModule
 import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -30,7 +31,7 @@ class App : Application() {
     private fun KoinApplication.appModules() {
         modules(
             modules = listOf(
-
+                screenModule
             )
         )
     }

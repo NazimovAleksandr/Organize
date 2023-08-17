@@ -1,7 +1,7 @@
 [versions]
-compileSdk = "34"
+compileSdk = "33"
 minSdk = "21"
-targetSdk = "34"
+targetSdk = "33"
 
 agp = "8.1.0"
 kotlin = "1.9.0"
@@ -63,3 +63,4 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 com-android-library = { id = "com.android.library", version.ref = "agp" }
+org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

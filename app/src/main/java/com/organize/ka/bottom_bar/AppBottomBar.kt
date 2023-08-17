@@ -108,6 +108,7 @@ private fun BottomBar(
 
     NavigationBar(
         containerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier
             .background(color = PrimaryBlue)
     ) {

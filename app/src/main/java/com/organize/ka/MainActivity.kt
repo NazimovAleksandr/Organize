@@ -32,13 +32,15 @@ class MainActivity : ComponentActivity() {
         OrganizeTheme {
             Scaffold(
                 bottomBar = { AppBottomBar(navController = navController) }
-            ) {
+            ) { paddingValues ->
                 NavHost(
                     navController = navController,
                     startDestination = AppNavGraphImpl.Splash.graphRoute,
                     builder = { appNavGraphBuilder(navController = navController) },
                     modifier = Modifier
-                        .padding(it)
+                        .padding(
+                            bottom = paddingValues.calculateBottomPadding()
+                        )
                 )
             }
         }

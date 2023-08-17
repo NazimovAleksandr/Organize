@@ -9,3 +9,4 @@ val PrimaryText = Color(0xFF262736)
 val PrimaryBlue = Color(0xFF264653)
 
 val PriorityNotAssigned = Color(0xFF7E7E79)
+val PriorityCardNotAssigned = Color(0xFFD8D8D7)
