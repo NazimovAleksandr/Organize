@@ -1,5 +1,6 @@
 package com.core.nav_graph
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -12,7 +13,7 @@ import androidx.navigation.compose.composable
 
 fun NavGraphBuilder.composable(
     graphDestination: AppNavGraph,
-    content: @Composable (NavBackStackEntry) -> Unit,
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit,
 ) {
     composable(
         route = graphDestination.graphRoute,
