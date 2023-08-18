@@ -34,7 +34,7 @@ class TasksViewModel : MviProcessor<TasksState, TasksEvent, TasksSingleEvent>() 
         val curTime = dateFormat.parse(todayDate)?.time ?: 0L
 
         return TasksState(
-            date = date.format(System.currentTimeMillis()),
+            date = date.format(System.currentTimeMillis()) + ", сегодня",
             habits = listOf(
                 Habit(
                     id = ++id,
@@ -58,14 +58,7 @@ class TasksViewModel : MviProcessor<TasksState, TasksEvent, TasksSingleEvent>() 
 
     override fun reduce(event: TasksEvent, state: TasksState): TasksState {
         return when (event) {
-            is TasksEvent.SelectDate -> {
-                val date = SimpleDateFormat("dd MMMM", Locale.getDefault())
-
-                state.copy(
-                    date = date.format(event.date),
-                    selectedDate = event.date
-                )
-            }
+            is TasksEvent.SelectDate -> state.copy(selectedDate = event.date)
 
             is TasksEvent.UpdateHabits -> state.copy(habits = state.habits.toMutableList().let {
                 it.add(

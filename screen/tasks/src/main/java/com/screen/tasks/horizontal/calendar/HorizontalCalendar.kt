@@ -1,6 +1,5 @@
 package com.screen.tasks.horizontal.calendar
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +16,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,16 +32,17 @@ import com.core.ui.theme.OrganizeTheme
 import com.core.ui.theme.PriorityCardNotAssigned
 import com.core.ui.theme.PriorityNotAssigned
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 @Composable
 fun HorizontalCalendar(
-    selectedDate: Long,
+    selectedDate: State<Long>,
     modifier: Modifier = Modifier,
     state: HorizontalCalendarState = rememberHorizontalCalendarState(),
     onClickItem: (Long) -> Unit,
 ) {
+    val selectedDateValue by remember { selectedDate }
+
     val lazyListState = rememberLazyListState()
     val dateFormat = remember { SimpleDateFormat("dd/M/yyyy", Locale.getDefault()) }
 
@@ -52,12 +54,10 @@ fun HorizontalCalendar(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        items(items = state.dateRange, key = { it }) {
-            Log.d("TAG", "HorizontalCalendar: it = $it")
-            Log.d("TAG", "HorizontalCalendar: selectedDate = ${dateFormat.format(selectedDate)}")
+        items(items = state.dateRange, key = { it.dateTime }) {
             DayItem(
-                date = it,
-                isSelectedDate = it == dateFormat.format(selectedDate),
+                day = it,
+                isSelectedDate = dateFormat.format(it.dateTime) == dateFormat.format(selectedDateValue),
                 onClick = onClickItem
             )
         }
@@ -77,40 +77,15 @@ fun HorizontalCalendar(
 
 @Composable
 private fun DayItem(
-    date: String,
+    day: Day,
     isSelectedDate: Boolean,
     onClick: (Long) -> Unit,
 ) {
-    val dateFormat = remember { SimpleDateFormat("dd/M/yyyy", Locale.getDefault()) }
-    val formatterDayNumber = remember { SimpleDateFormat("dd", Locale.getDefault()) }
-    val formatterDayName = remember { SimpleDateFormat("EE", Locale.getDefault()) }
-
-    val dateTime = dateFormat.parse(date)?.time ?: 0
-
-    val dayOfWeek = remember {
-        formatterDayName.format(dateTime)
-            .replaceFirstChar { it.titlecase(Locale.getDefault()) }
-    }
-
-    val dayNumber = formatterDayNumber.format(dateTime)
-
-    val currentDate = Date()
-    val sdf = SimpleDateFormat("ddMMyyyy", Locale.getDefault())
-    val isCurrentDate = sdf.format(currentDate).toInt() == sdf.format(dateTime).toInt()
-
-    val today = System.currentTimeMillis() - 24 * 1000 * 60 * 60L
-    val dayNumberColor =
-        when {
-            isSelectedDate -> MaterialTheme.colorScheme.background
-            today <= dateTime -> MaterialTheme.colorScheme.onBackground
-            else -> PriorityCardNotAssigned
-        }
-
     val dayNumberModifier = Modifier
         .size(size = 20.dp)
         .clip(shape = CircleShape)
         .let {
-            if (isCurrentDate) it.border(
+            if (day.isToday) it.border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.primary,
                 shape = CircleShape
@@ -128,14 +103,14 @@ private fun DayItem(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(horizontal = 10.dp)
-                .padding(top = 2.dp)
+                .padding(top = 4.dp, bottom = 2.dp)
                 .clip(shape = CircleShape)
-                .clickableSingle { onClick.invoke(dateTime) }
+                .clickableSingle { onClick.invoke(day.dateTime) }
                 .padding(horizontal = 6.dp)
-                .padding(top = 2.dp, bottom = 6.dp)
+                .padding(bottom = 4.dp)
         ) {
             Text(
-                text = dayOfWeek,
+                text = day.dayOfWeek,
                 style = MaterialTheme.typography.labelMedium,
                 color = PriorityNotAssigned,
                 modifier = Modifier
@@ -147,9 +122,13 @@ private fun DayItem(
                 modifier = dayNumberModifier
             ) {
                 Text(
-                    text = dayNumber,
+                    text = day.number,
                     style = MaterialTheme.typography.titleSmall,
-                    color = dayNumberColor,
+                    color = when {
+                        isSelectedDate -> MaterialTheme.colorScheme.background
+                        day.isAfterToday -> MaterialTheme.colorScheme.onBackground
+                        else -> PriorityCardNotAssigned
+                    },
                 )
             }
         }
@@ -160,9 +139,12 @@ private fun DayItem(
 @Composable
 private fun Preview() {
     OrganizeTheme {
-        HorizontalCalendar(
-            selectedDate = Date().time
-        ) {}
+//        val state = remember {
+//            mutableLongStateOf(Date().time)
+//        }
+//        HorizontalCalendar(
+//            selectedDate = state
+//        ) {}
     }
 }
 

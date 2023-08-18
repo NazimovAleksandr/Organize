@@ -26,14 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.core.nav_graph.AppNavGraph
 import com.core.ui.composable.ActionProgress
 import com.core.ui.composable.Content
 import com.core.ui.modifier.clickableSingle
 import com.core.ui.modifier.clipCircleShape
-import com.core.ui.theme.OrganizeTheme
 import com.organize.entity.Habit
 import com.screen.tasks.horizontal.calendar.HorizontalCalendar
 import org.koin.androidx.compose.koinViewModel
@@ -43,30 +41,32 @@ internal fun TasksScreen(
     navigate: (AppNavGraph) -> Unit,
     viewModel: TasksViewModel = koinViewModel(),
 ) {
-    val state by remember {
-        viewModel.uiState
-    }
-
     Screen(
-        state = state,
+        state = viewModel.uiState,
         onClick = viewModel::sendEvent,
     )
 }
 
 @Composable
 private fun Screen(
-    state: TasksState,
+    state: State<TasksState>,
     onClick: (TasksEvent) -> Unit,
 ) {
-    val title = remember(key1 = state.date) {
+    val title = remember(key1 = state) {
         derivedStateOf {
-            state.date
+            state.value.date
         }
     }
 
-    val habits = remember(key1 = state.habits) {
+    val habits = remember(key1 = state) {
         derivedStateOf {
-            state.habits
+            state.value.habits
+        }
+    }
+
+    val selectedDate = remember(key1 = state) {
+        derivedStateOf {
+            state.value.selectedDate
         }
     }
 
@@ -81,7 +81,7 @@ private fun Screen(
         Habits(habits = habits)
 
         HorizontalCalendar(
-            selectedDate = state.selectedDate,
+            selectedDate = selectedDate,
             onClickItem = { date -> onClick.invoke(TasksEvent.SelectDate(date)) }
         )
 
@@ -158,7 +158,7 @@ private fun ScreenToolbar(title: State<String>) {
 private fun Habits(
     habits: State<List<Habit>>,
 ) {
-    val habitsValue by remember(key1 = habits.value) { habits }
+    val habitsValue by remember(key1 = habits) { habits }
 
     Content {
         LazyRow(
@@ -172,6 +172,7 @@ private fun Habits(
         }
     }
 }
+/*
 
 @Preview(showBackground = true)
 @Composable
@@ -202,4 +203,4 @@ private fun ScreenPreview() {
             onClick = {}
         )
     }
-}
+}*/
