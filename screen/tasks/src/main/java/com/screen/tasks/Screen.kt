@@ -64,9 +64,9 @@ private fun Screen(
         }
     }
 
-    val selectedDate = remember(key1 = state) {
+    val dateRange = remember(key1 = state) {
         derivedStateOf {
-            state.value.selectedDate
+            state.value.dateRange
         }
     }
 
@@ -80,10 +80,12 @@ private fun Screen(
 
         Habits(habits = habits)
 
-        HorizontalCalendar(
-            selectedDate = selectedDate,
-            onClickItem = { date -> onClick.invoke(TasksEvent.SelectDate(date)) }
-        )
+        Content {
+            HorizontalCalendar(
+                dateRange = dateRange,
+                onClickItem = { date -> onClick.invoke(TasksEvent.SelectDate(date)) }
+            )
+        }
 
         Spacer(modifier = Modifier.height(height = 10.dp))
 

@@ -1,5 +1,6 @@
 package com.screen.tasks.horizontal.calendar
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -31,20 +32,17 @@ import com.core.ui.modifier.clickableSingle
 import com.core.ui.theme.OrganizeTheme
 import com.core.ui.theme.PriorityCardNotAssigned
 import com.core.ui.theme.PriorityNotAssigned
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.screen.tasks.model.Day
 
 @Composable
 fun HorizontalCalendar(
-    selectedDate: State<Long>,
+    dateRange: State<List<Day>>,
     modifier: Modifier = Modifier,
-    state: HorizontalCalendarState = rememberHorizontalCalendarState(),
     onClickItem: (Long) -> Unit,
 ) {
-    val selectedDateValue by remember { selectedDate }
+    val dateRangeValue by remember(key1 = dateRange) { dateRange }
 
     val lazyListState = rememberLazyListState()
-    val dateFormat = remember { SimpleDateFormat("dd/M/yyyy", Locale.getDefault()) }
 
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -54,10 +52,10 @@ fun HorizontalCalendar(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        items(items = state.dateRange, key = { it.dateTime }) {
+        items(items = dateRangeValue, key = { it.dateTime }) {
             DayItem(
                 day = it,
-                isSelectedDate = dateFormat.format(it.dateTime) == dateFormat.format(selectedDateValue),
+                isSelectedDate = it.isSelected,
                 onClick = onClickItem
             )
         }
@@ -69,7 +67,7 @@ fun HorizontalCalendar(
         }
 
         lazyListState.scrollToItem(
-            index = state.currentDateIndex,
+            index = dateRangeValue.indexOfFirst { it.isSelected } + 1,
             scrollOffset = -screenWidth.toInt()
         )
     }
@@ -81,6 +79,7 @@ private fun DayItem(
     isSelectedDate: Boolean,
     onClick: (Long) -> Unit,
 ) {
+    Log.d("TAG", "DayItem: day = ${day.hashCode()}")
     val dayNumberModifier = Modifier
         .size(size = 20.dp)
         .clip(shape = CircleShape)
