@@ -18,12 +18,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.core.nav_graph.AppNavGraph
 import com.core.nav_graph.AppNavGraphImpl
-import com.core.ui.theme.PriorityNotAssigned
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 internal fun SplashScreen(
     navigate: (AppNavGraph) -> Unit,
+    @Suppress("UNUSED_PARAMETER")
+    viewModel: SplashViewModel = koinViewModel(),
 ) {
     Column(
         verticalArrangement = Arrangement.Top,
@@ -34,7 +36,7 @@ internal fun SplashScreen(
         Spacer(modifier = Modifier.weight(weight = 100f))
 
         Image(
-            imageVector = ImageVector.vectorResource(id = com.core.R.drawable.ic_splash_logo),
+            imageVector = ImageVector.vectorResource(id = com.res.R.drawable.ic_splash_logo),
             contentDescription = null,
             modifier = Modifier
         )
@@ -42,7 +44,7 @@ internal fun SplashScreen(
         Spacer(modifier = Modifier.weight(weight = 40f))
 
         Text(
-            text = stringResource(id = com.core.R.string.app_name),
+            text = stringResource(id = com.res.R.string.app_name),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
         )
@@ -50,9 +52,9 @@ internal fun SplashScreen(
         Spacer(modifier = Modifier.height(height = 2.dp))
 
         Text(
-            text = stringResource(id = com.core.R.string.your_to_do_planner),
+            text = stringResource(id = com.res.R.string.your_to_do_planner),
             style = MaterialTheme.typography.bodyLarge,
-            color = PriorityNotAssigned,
+            color = MaterialTheme.colorScheme.outline,
             modifier = Modifier
         )
 
