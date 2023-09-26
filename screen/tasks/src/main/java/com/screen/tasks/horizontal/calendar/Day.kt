@@ -1,4 +1,4 @@
-package com.screen.tasks.model
+package com.screen.tasks.horizontal.calendar
 
 data class Day(
     val dayOfWeek: String,
