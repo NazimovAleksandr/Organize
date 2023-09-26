@@ -10,8 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.core.ui.theme.OrganizeTheme
 import com.core.nav_graph.AppNavGraphImpl
+import com.core.ui.theme.OrganizeTheme
+import com.core.ui.utils.bottomBarHeight
 import com.organize.ka.bottom_bar.AppBottomBar
 import com.organize.ka.navigation.appNavGraphBuilder
 
@@ -33,6 +34,8 @@ class MainActivity : ComponentActivity() {
             Scaffold(
                 bottomBar = { AppBottomBar(navController = navController) }
             ) { paddingValues ->
+                bottomBarHeight = paddingValues.calculateBottomPadding()
+
                 NavHost(
                     navController = navController,
                     startDestination = AppNavGraphImpl.Splash.graphRoute,
