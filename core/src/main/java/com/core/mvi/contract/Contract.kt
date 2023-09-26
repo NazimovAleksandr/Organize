@@ -1,5 +1,5 @@
 package com.core.mvi.contract
 
 interface ScreenState
-interface Event
-interface SingleEvent
+interface ScreenEvent
+interface ScreenSingleEvent

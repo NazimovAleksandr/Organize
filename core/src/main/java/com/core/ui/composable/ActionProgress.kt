@@ -22,7 +22,7 @@ import com.core.ui.theme.OrganizeTheme
 
 @Composable
 fun ActionProgress(
-    @DrawableRes icon: Int,
+    @DrawableRes icon: Int?,
     @FloatRange(from = 0.0, to = 1.0) progress: Float,
     modifier: Modifier = Modifier,
 ) {
@@ -43,13 +43,15 @@ fun ActionProgress(
             modifier = Modifier
                 .size(size = 30.dp)
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = icon),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.background,
-                modifier = Modifier
-                    .padding(all = 3.dp)
-            )
+            icon?.let {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = it),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.background,
+                    modifier = Modifier
+                        .padding(all = 3.dp)
+                )
+            }
         }
     }
 }
@@ -59,7 +61,7 @@ fun ActionProgress(
 private fun Preview() {
     OrganizeTheme {
         ActionProgress(
-            icon = com.core.R.drawable.ic_search,
+            icon = com.res.R.drawable.ic_search,
             progress = 0.3f
         )
     }

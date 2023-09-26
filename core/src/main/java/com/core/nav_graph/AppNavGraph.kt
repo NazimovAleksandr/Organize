@@ -10,12 +10,25 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 
 fun NavGraphBuilder.composable(
     graphDestination: AppNavGraph,
     content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit,
 ) {
     composable(
+        route = graphDestination.graphRoute,
+        arguments = graphDestination.arguments,
+        deepLinks = graphDestination.deepLinks,
+        content = content
+    )
+}
+
+fun NavGraphBuilder.dialog(
+    graphDestination: AppNavGraph,
+    content: @Composable (NavBackStackEntry) -> Unit,
+) {
+    dialog(
         route = graphDestination.graphRoute,
         arguments = graphDestination.arguments,
         deepLinks = graphDestination.deepLinks,

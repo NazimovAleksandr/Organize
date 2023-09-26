@@ -26,36 +26,36 @@ interface AppNavGraphImpl {
         }
 
         object Tasks : AppNavGraph(), BottomBarGraph {
-            override val title = com.core.R.string.tasks
-            override val icon = com.core.R.drawable.ic_tasks
+            override val title = com.res.R.string.tasks
+            override val icon = com.res.R.drawable.ic_tasks
 
             override var navOptions: NavOptions? = bottomNavOptions
         }
 
         object Notes : AppNavGraph(), BottomBarGraph {
-            override val title = com.core.R.string.notes
-            override val icon = com.core.R.drawable.ic_notes
+            override val title = com.res.R.string.notes
+            override val icon = com.res.R.drawable.ic_notes
 
             override var navOptions: NavOptions? = bottomNavOptions
         }
 
         object Plans : AppNavGraph(), BottomBarGraph {
-            override val title = com.core.R.string.plans
-            override val icon = com.core.R.drawable.ic_plans
+            override val title = com.res.R.string.plans
+            override val icon = com.res.R.drawable.ic_plans
 
             override var navOptions: NavOptions? = bottomNavOptions
         }
 
         object Habits : AppNavGraph(), BottomBarGraph {
-            override val title = com.core.R.string.habits
-            override val icon = com.core.R.drawable.ic_habits
+            override val title = com.res.R.string.habits
+            override val icon = com.res.R.drawable.ic_habits
 
             override var navOptions: NavOptions? = bottomNavOptions
         }
 
         object Settings : AppNavGraph(), BottomBarGraph {
-            override val title = com.core.R.string.settings
-            override val icon = com.core.R.drawable.ic_settings
+            override val title = com.res.R.string.settings
+            override val icon = com.res.R.drawable.ic_settings
 
             override var navOptions: NavOptions? = bottomNavOptions
         }

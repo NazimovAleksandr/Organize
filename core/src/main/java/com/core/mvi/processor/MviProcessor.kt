@@ -6,14 +6,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.core.mvi.contract.Event
+import com.core.mvi.contract.ScreenEvent
 import com.core.mvi.contract.ScreenState
-import com.core.mvi.contract.SingleEvent
+import com.core.mvi.contract.ScreenSingleEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
-abstract class MviProcessor<S : ScreenState, E : Event, SE : SingleEvent> : ViewModel() {
+abstract class MviProcessor<S : ScreenState, E : ScreenEvent, SE : ScreenSingleEvent> : ViewModel() {
 
     @Suppress("PrivatePropertyName")
     private val TAG = this::class.java.simpleName

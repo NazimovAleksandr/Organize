@@ -27,6 +27,9 @@ private val lightColorScheme = lightColorScheme(
     surface = PrimaryBlue,
     onSurface = SecondaryWhite,
     primary = PrimaryBlue,
+    outline = PriorityNotAssigned,
+    outlineVariant = SecondaryBeige,
+    scrim = PrimaryLight,
 )
 
 @Composable

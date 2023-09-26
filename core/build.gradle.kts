@@ -9,8 +9,8 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -22,12 +22,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     buildFeatures {
@@ -41,6 +41,9 @@ android {
 }
 
 dependencies {
+    implementation(project(mapOf("path" to ":res")))
+    implementation(project(mapOf("path" to ":entity")))
+
     api(libs.core.ktx)
 
     api(libs.lifecycle.runtime.ktx)
@@ -49,6 +52,8 @@ dependencies {
     api(libs.lifecycle.viewmodel.compose)
 
     api(platform(libs.compose.bom))
+    api(libs.foundation)
+    api(libs.foundation.layout)
     api(libs.ui)
     api(libs.ui.graphics)
     api(libs.ui.tooling.preview)
