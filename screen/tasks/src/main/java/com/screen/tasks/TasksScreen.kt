@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope.Companion.DefaultBlendMode
@@ -92,15 +94,43 @@ private fun Screen(
     state: State<TasksScreenState>,
     onClick: (TasksScreenEvent) -> Unit,
 ) {
-    val title = remember(key1 = state) {
+    val day = remember(key1 = state) {
         derivedStateOf {
-            state.value.date
+            state.value.day
+        }
+    }
+    val month = remember(key1 = state) {
+        derivedStateOf {
+            state.value.month
+        }
+    }
+    val year = remember(key1 = state) {
+        derivedStateOf {
+            state.value.year
         }
     }
 
     val habits = remember(key1 = state) {
         derivedStateOf {
             state.value.habits
+        }
+    }
+
+    val dateRange = remember(key1 = state) {
+        derivedStateOf {
+            state.value.dateRange
+        }
+    }
+
+    val selectedDay = remember(key1 = state) {
+        derivedStateOf {
+            state.value.selectedDay
+        }
+    }
+
+    val animateScroll = remember(key1 = state) {
+        derivedStateOf {
+            state.value.animateScroll
         }
     }
 
@@ -166,12 +196,20 @@ private fun Screen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            ScreenToolbar(title = title)
+            ScreenToolbar(
+                day = day,
+                month = month,
+                year = year,
+                onClick = onClick,
+            )
 
             Habits(habits = habits)
 
             Content {
                 HorizontalCalendar(
+                    dateRange = dateRange,
+                    selectedDay = selectedDay,
+                    animateScroll = animateScroll,
                     onClickItem = { date -> onClick.invoke(TasksScreenEvent.SelectDate(date)) }
                 )
             }
@@ -183,21 +221,68 @@ private fun Screen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScreenToolbar(title: State<String>) {
-    val titleValue by remember(key1 = title) { title }
+private fun ScreenToolbar(
+    day: State<String>,
+    month: State<String>,
+    year: State<String>,
+    onClick: (TasksScreenEvent) -> Unit,
+) {
+    val dayValue by remember(key1 = day) { day }
+    val monthValue by remember(key1 = month) { month }
+    val yearValue by remember(key1 = year) { year }
 
     TopAppBar(
         title = {
-            Text(
-                text = "$titleValue, ${stringResource(id = R.string.today)}",
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+            Column(
+                verticalArrangement = Arrangement.spacedBy(space = (-24).dp),
+                horizontalAlignment = Alignment.Start,
                 modifier = Modifier
-                    .padding(start = 10.dp)
-            )
+                    .padding(start = 10.dp, top = 5.dp)
+            ) {
+                Text(
+                    text = "$dayValue $monthValue",
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                )
+
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.Bottom,
+                    modifier = Modifier
+                ) {
+                    Text(
+                        text = "$dayValue ",
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .alpha(alpha = 0f)
+                    )
+
+                    Text(
+                        text = yearValue,
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                    )
+                }
+
+            }
         },
         actions = {
+            Text(
+                text = stringResource(id = R.string.today),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .padding(end = 1.dp)
+                    .clipCircleShape()
+                    .clickableSingle(onClick = { onClick.invoke(TasksScreenEvent.SelectTodayDate) })
+                    .padding(all = 6.dp)
+            )
+
             Image(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_calendar),
                 contentDescription = null,

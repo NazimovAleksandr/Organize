@@ -12,8 +12,8 @@
     - [ ] Sort (Time, Priority, Category)
   - [x] Timeline
   - [ ] Toolbar
-    - [ ] Select Date
-    - [ ] Today
+    - [x] Select Date
+    - [x] Today
     - [ ] Calendar
     - [ ] Search
     - [ ] Menu

@@ -9,7 +9,7 @@
     <string name="settings">Настройки</string>
 
     <string name="your_to_do_planner">Планировщик твоих дел</string>
-    <string name="today">сегодня</string>
+    <string name="today">Сегодня</string>
     <string name="tomorrow">завтра</string>
     <string name="tow_days_later">послезавтра</string>
     <string name="yesterday">вчера</string>
@@ -40,4 +40,12 @@
     <string name="clear">Очистить</string>
     <string name="cancel">Отмена</string>
     <string name="ok">OK</string>
+
+    <string name="recall_no">Нет</string>
+    <string name="recall_time">Во момент начала</string>
+    <string name="recall_five_minutes">За 5 минут</string>
+    <string name="recall_fifteen_minutes">За 15 минут</string>
+    <string name="recall_thirty_minutes">За 30 минут</string>
+    <string name="recall_one_hour">За 1 час</string>
+    <string name="recall_one_day">За 1 день</string>
 </resources>

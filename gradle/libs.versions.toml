@@ -3,22 +3,22 @@ compileSdk = "34"
 minSdk = "26"
 targetSdk = "34"
 
-agp = "8.1.1"
-kotlin = "1.9.0"
-ksp = "1.9.0-1.0.11"
+agp = "8.2.0"
+kotlin = "1.9.20"
+ksp = "1.9.20-1.0.14"
 
 core-ktx = "1.12.0"
 
 lifecycle-version = "2.6.2"
 
-compose-bom = "2023.09.01"
-compose-compiler = "1.5.1"
+compose-bom = "2023.10.01"
+compose-compiler = "1.5.5"
 
-activity-compose = "1.7.2"
-navigation-compose = "2.7.3"
+activity-compose = "1.8.1"
+navigation-compose = "2.7.5"
 
 splashscreen = "1.0.1"
-room_version = "2.5.2"
+room_version = "2.6.1"
 gson = "2.10.1"
 kotlinx-datetime = "0.4.1"
 
@@ -26,7 +26,7 @@ koin-core = "3.4.2"
 koin-android = "3.4.2"
 koin-compose = "3.4.5"
 
-firebase-bom = "32.3.1"
+firebase-bom = "32.6.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
