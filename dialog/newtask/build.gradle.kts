@@ -42,6 +42,7 @@ dependencies {
 
     implementation(project(mapOf("path" to ":dialog:date")))
     implementation(project(mapOf("path" to ":dialog:time")))
+    implementation(project(mapOf("path" to ":dialog:recall")))
     implementation(project(mapOf("path" to ":dialog:priority")))
     implementation(project(mapOf("path" to ":dialog:category")))
 

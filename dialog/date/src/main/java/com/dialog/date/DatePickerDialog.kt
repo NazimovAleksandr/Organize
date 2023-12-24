@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,9 +22,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.core.ui.composable.ClearCancelOkButtons
 import com.core.ui.composable.Content
 import com.core.ui.modifier.clickableOff
 import com.core.ui.modifier.clickableSingle
@@ -49,9 +51,9 @@ sealed interface DatePickerDialogCommand {
 
 data class DatePickerDialogData(
     val currentDay: LocalDate = LocalDate.now(),
-    val timeStart: String = "",
-    val timeEnd: String = "",
-    val recall: String = "",
+    val timeStart: String,
+    val timeEnd: String,
+    val recall: String? = null,
     val repeat: String = "",
 )
 
@@ -70,13 +72,14 @@ private fun DatePicker(
     modifier: Modifier = Modifier,
 ) {
     var selectDate by remember { mutableStateOf(data.currentDay) }
+    val context = LocalContext.current
 
     Content {
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,
             modifier = modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 24.dp)
                 .clickableOff()
                 .background(
                     color = MaterialTheme.colorScheme.background,
@@ -117,65 +120,26 @@ private fun DatePicker(
             SettingsItem(
                 icon = R.drawable.ic_bell,
                 text = R.string.recall,
-                data = data.recall,
+                data = data.recall ?: context.getString(R.string.recall_no),
                 onClick = { onClick.invoke(DatePickerDialogCommand.Recall) }
             )
 
-            Spacer(modifier = Modifier.height(height = 8.dp))
+            /*Spacer(modifier = Modifier.height(height = 8.dp))
 
             SettingsItem(
                 icon = R.drawable.ic_refresh,
                 text = R.string.repeat,
                 data = data.repeat,
                 onClick = { onClick.invoke(DatePickerDialogCommand.Repeat) }
-            )
+            )*/
 
             Spacer(modifier = Modifier.height(height = 12.dp))
 
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.Top,
-                modifier = Modifier
-                    .padding(horizontal = 12.dp)
-                    .padding(bottom = 9.dp, top = 8.dp)
-            ) {
-                TextButton(
-                    onClick = { onClick.invoke(DatePickerDialogCommand.Clear) }
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.clear),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(weight = 1f))
-
-                TextButton(
-                    onClick = { onClick.invoke(DatePickerDialogCommand.Cancel) }
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.cancel),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(width = 4.dp))
-
-                TextButton(
-                    onClick = { onClick.invoke(DatePickerDialogCommand.Ok(date = selectDate)) }
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.ok),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier
-                    )
-                }
-            }
+            ClearCancelOkButtons(
+                onClickClear = { onClick.invoke(DatePickerDialogCommand.Clear) },
+                onClickCancel = { onClick.invoke(DatePickerDialogCommand.Cancel) },
+                onClickOk = { onClick.invoke(DatePickerDialogCommand.Ok(date = selectDate)) },
+            )
         }
     }
 }
@@ -219,8 +183,9 @@ private fun SettingsItem(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.outline,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
-                .padding(end = 8.dp)
+                .padding(end = 8.dp, start = 50.dp)
         )
     }
 }

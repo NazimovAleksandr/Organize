@@ -55,6 +55,7 @@ import com.dialog.category.CategoryPickerDialog
 import com.dialog.date.DatePickerDialog
 import com.dialog.date.DatePickerDialogCommand
 import com.dialog.priority.PriorityPickerDialog
+import com.dialog.recall.RecallPickerDialog
 import com.dialog.time.TimePickerDialog
 import com.organize.entity.task_priority.TaskPriority
 import com.res.R
@@ -126,6 +127,8 @@ private fun ColumnScope.Dialog(
         viewModel.sendEvent(NewTaskEvent.OnBack)
     }
 
+    val context = LocalContext.current
+
     when (state.dialogType) {
         DialogType.Back -> LaunchedEffect(key1 = Unit, block = { dismiss.invoke() })
 
@@ -140,8 +143,6 @@ private fun ColumnScope.Dialog(
                     .fillMaxSize()
                     .clickableSingle(ripple = false) { viewModel.sendEvent(NewTaskEvent.OnBack) }
             ) {
-                val context = LocalContext.current
-
                 DatePickerDialog(
                     data = state.datePickerDialogData
                 ) {
@@ -149,7 +150,8 @@ private fun ColumnScope.Dialog(
                         is DatePickerDialogCommand.TimeStart -> viewModel.sendEvent(NewTaskEvent.OpenTimeStartPicker)
                         is DatePickerDialogCommand.TimeEnd -> viewModel.sendEvent(NewTaskEvent.OpenTimeEndPicker)
 
-                        is DatePickerDialogCommand.Recall -> {} // todo
+                        is DatePickerDialogCommand.Recall -> viewModel.sendEvent(NewTaskEvent.OpenRecallPicker)
+
                         is DatePickerDialogCommand.Repeat -> {} // todo
 
                         is DatePickerDialogCommand.Clear -> viewModel.sendEvent(NewTaskEvent.ClearDate(context))
@@ -194,7 +196,26 @@ private fun ColumnScope.Dialog(
             }
         }
 
-        else -> {
+        DialogType.RecallPicker -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickableSingle(ripple = false) { viewModel.sendEvent(NewTaskEvent.OnBack) }
+            ) {
+                RecallPickerDialog(
+                    data = state.recallPickerDialogData,
+                    onClickClear = { viewModel.sendEvent(NewTaskEvent.RecallClear(context = context)) },
+                    onClickCancel = { viewModel.sendEvent(NewTaskEvent.OnBack) },
+                    onClickOk = { viewModel.sendEvent(NewTaskEvent.Recall(list = it, context = context)) },
+                )
+            }
+        }
+
+        DialogType.Base,
+        DialogType.PriorityPicker,
+        DialogType.CategoryPicker,
+        -> {
             val focusRequester = remember { FocusRequester() }
 
             Box(
@@ -219,8 +240,8 @@ private fun ColumnScope.Dialog(
                     when (it) {
                         is NewTaskDialogCommand.FullSize -> viewModel.sendEvent(NewTaskEvent.OpenFullSize)
                         is NewTaskDialogCommand.Date -> viewModel.sendEvent(NewTaskEvent.OpenDatePicker)
-                        is NewTaskDialogCommand.Priority -> viewModel.sendEvent(NewTaskEvent.OpenPriority)
-                        is NewTaskDialogCommand.Category -> viewModel.sendEvent(NewTaskEvent.OpenCategory)
+                        is NewTaskDialogCommand.Priority -> viewModel.sendEvent(NewTaskEvent.OpenPriorityPicker)
+                        is NewTaskDialogCommand.Category -> viewModel.sendEvent(NewTaskEvent.OpenCategoryPicker)
                         is NewTaskDialogCommand.Title -> viewModel.sendEvent(NewTaskEvent.Title(it.data))
                         is NewTaskDialogCommand.Description -> viewModel.sendEvent(NewTaskEvent.Description(it.data))
                         is NewTaskDialogCommand.SaveTask -> viewModel.sendEvent(NewTaskEvent.SaveTask)
@@ -228,7 +249,7 @@ private fun ColumnScope.Dialog(
                 }
 
                 when (state.dialogType) {
-                    DialogType.Priority -> {
+                    DialogType.PriorityPicker -> {
                         Row(
                             horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.Bottom,
@@ -250,7 +271,7 @@ private fun ColumnScope.Dialog(
                         }
                     }
 
-                    DialogType.Category -> {
+                    DialogType.CategoryPicker -> {
                         Row(
                             horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.Bottom,

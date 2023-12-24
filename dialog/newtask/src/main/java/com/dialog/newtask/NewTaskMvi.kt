@@ -6,6 +6,8 @@ import com.core.mvi.contract.ScreenSingleEvent
 import com.core.mvi.contract.ScreenState
 import com.core.mvi.processor.MviProcessor
 import com.dialog.date.DatePickerDialogData
+import com.dialog.recall.RecallPickerDialogData
+import com.dialog.recall.RecallVariants
 import com.dialog.time.TimePickerDialogData
 import com.organize.data.DataManager
 import com.organize.entity.task_category.CategoryUI
@@ -20,7 +22,15 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 enum class DialogType {
-    Back, Base, DatePicker, TimePickerStart, TimePickerEnd, Priority, Category, FullSize
+    Back,
+    Base,
+    DatePicker,
+    TimePickerStart,
+    TimePickerEnd,
+    RecallPicker,
+    PriorityPicker,
+    CategoryPicker,
+    FullSize,
 }
 
 data class TaskData(
@@ -45,6 +55,7 @@ data class NewTaskState(
     val datePickerDialogData: DatePickerDialogData,
     val timeStartPickerDialogData: TimePickerDialogData,
     val timeEndPickerDialogData: TimePickerDialogData,
+    val recallPickerDialogData: RecallPickerDialogData,
     val categoryList: Flow<List<CategoryUI>>,
 ) : ScreenState
 
@@ -58,8 +69,9 @@ sealed interface NewTaskEvent : ScreenEvent {
     object OpenDatePicker : NewTaskEvent
     object OpenTimeStartPicker : NewTaskEvent
     object OpenTimeEndPicker : NewTaskEvent
-    object OpenPriority : NewTaskEvent
-    object OpenCategory : NewTaskEvent
+    object OpenRecallPicker : NewTaskEvent
+    object OpenPriorityPicker : NewTaskEvent
+    object OpenCategoryPicker : NewTaskEvent
     object SaveTask : NewTaskEvent
 
     class Category(val category: CategoryUI?) : NewTaskEvent
@@ -72,6 +84,9 @@ sealed interface NewTaskEvent : ScreenEvent {
 
     class TimeStart(val hour: Int?, val minute: Int?) : NewTaskEvent
     class TimeEnd(val hour: Int?, val minute: Int?) : NewTaskEvent
+
+    class RecallClear(val context: Context) : NewTaskEvent
+    class Recall(val list: List<RecallVariants>?, val context: Context) : NewTaskEvent
 }
 
 sealed interface NewTaskSingleEvent : ScreenSingleEvent {
@@ -89,12 +104,14 @@ class NewTaskViewModel(dataManager: DataManager) : MviProcessor<NewTaskState, Ne
     private var category: CategoryUI? = null
 
     private var date: LocalDate = LocalDate.now()
-    private var timeStart: Int? = null
-    private var timeEnd: Int? = null
+    private var timeStart: Int? = getCurrentTime()
+    private var timeEnd: Int? = getCurrentTime() + 100
 
     private var tempDate: LocalDate = LocalDate.now()
     private var tempTimeStart: Int? = null
     private var tempTimeEnd: Int? = null
+
+    private var recallList: List<RecallVariants>? = null
 
     override fun initialState(): NewTaskState {
         return NewTaskState(
@@ -104,9 +121,13 @@ class NewTaskViewModel(dataManager: DataManager) : MviProcessor<NewTaskState, Ne
                 description = description,
                 descriptionDate = descriptionDate,
             ),
-            datePickerDialogData = DatePickerDialogData(),
+            datePickerDialogData = DatePickerDialogData(
+                timeStart = getCorrectTime(time = getCurrentTime()),
+                timeEnd = getCorrectTime(time = getCurrentTime() + 100),
+            ),
             timeStartPickerDialogData = getTimePickerDialogData(time = timeStart),
             timeEndPickerDialogData = getTimePickerDialogData(time = timeEnd),
+            recallPickerDialogData = RecallPickerDialogData(),
             categoryList = categories,
         )
     }
@@ -126,6 +147,7 @@ class NewTaskViewModel(dataManager: DataManager) : MviProcessor<NewTaskState, Ne
 
                     DialogType.TimePickerStart -> state.copy(dialogType = DialogType.DatePicker)
                     DialogType.TimePickerEnd -> state.copy(dialogType = DialogType.DatePicker)
+                    DialogType.RecallPicker -> state.copy(dialogType = DialogType.DatePicker)
 
                     else -> state.copy(dialogType = DialogType.Back)
                 }
@@ -135,8 +157,9 @@ class NewTaskViewModel(dataManager: DataManager) : MviProcessor<NewTaskState, Ne
             is NewTaskEvent.OpenDatePicker -> state.copy(dialogType = DialogType.DatePicker)
             is NewTaskEvent.OpenTimeStartPicker -> state.copy(dialogType = DialogType.TimePickerStart)
             is NewTaskEvent.OpenTimeEndPicker -> state.copy(dialogType = DialogType.TimePickerEnd)
-            is NewTaskEvent.OpenPriority -> state.copy(dialogType = DialogType.Priority)
-            is NewTaskEvent.OpenCategory -> state.copy(dialogType = DialogType.Category)
+            is NewTaskEvent.OpenRecallPicker -> state.copy(dialogType = DialogType.RecallPicker)
+            is NewTaskEvent.OpenPriorityPicker -> state.copy(dialogType = DialogType.PriorityPicker)
+            is NewTaskEvent.OpenCategoryPicker -> state.copy(dialogType = DialogType.CategoryPicker)
 
             is NewTaskEvent.Title -> state.apply { title = event.title }
             is NewTaskEvent.Description -> state.apply { description = event.description }
@@ -156,8 +179,9 @@ class NewTaskViewModel(dataManager: DataManager) : MviProcessor<NewTaskState, Ne
             is NewTaskEvent.ClearDate -> {
                 tempTimeStart = null
                 tempTimeEnd = null
-                timeStart = null
-                timeEnd = null
+                recallList = null
+                timeStart = getCurrentTime()
+                timeEnd = getCurrentTime() + 100
                 date = LocalDate.now()
                 tempDate = LocalDate.now()
 
@@ -166,9 +190,13 @@ class NewTaskViewModel(dataManager: DataManager) : MviProcessor<NewTaskState, Ne
                         negativeDate = false,
                         descriptionDate = date.convertDate(event.context),
                     ),
-                    datePickerDialogData = DatePickerDialogData(),
-                    timeStartPickerDialogData = getTimePickerDialogData(time = tempTimeStart),
-                    timeEndPickerDialogData = getTimePickerDialogData(time = tempTimeEnd),
+                    datePickerDialogData = DatePickerDialogData(
+                        timeStart = getCorrectTime(time = getCurrentTime()),
+                        timeEnd = getCorrectTime(time = getCurrentTime() + 100),
+                    ),
+                    timeStartPickerDialogData = getTimePickerDialogData(time = timeStart),
+                    timeEndPickerDialogData = getTimePickerDialogData(time = timeEnd),
+                    recallPickerDialogData = state.recallPickerDialogData.copy(recallList),
                 )
             }
 
@@ -216,6 +244,8 @@ class NewTaskViewModel(dataManager: DataManager) : MviProcessor<NewTaskState, Ne
             }
 
             is NewTaskEvent.TimeStart -> {
+                event.hour ?: return state.copy(dialogType = DialogType.DatePicker)
+
                 tempTimeStart = getCorrectTime(hour = event.hour, minute = event.minute) ?: tempTimeStart
 
                 if (tempTimeStart != null && tempTimeEnd == null) {
@@ -231,12 +261,14 @@ class NewTaskViewModel(dataManager: DataManager) : MviProcessor<NewTaskState, Ne
                         timeStart = getCorrectTime(time = tempTimeStart),
                         timeEnd = getCorrectTime(time = tempTimeEnd),
                     ),
-                    timeStartPickerDialogData = getTimePickerDialogData(time = tempTimeStart),
-                    timeEndPickerDialogData = getTimePickerDialogData(time = tempTimeEnd),
+                    timeStartPickerDialogData = getTimePickerDialogData(time = tempTimeStart ?: timeStart),
+                    timeEndPickerDialogData = getTimePickerDialogData(time = tempTimeEnd ?: timeEnd),
                 )
             }
 
             is NewTaskEvent.TimeEnd -> {
+                event.hour ?: return state.copy(dialogType = DialogType.DatePicker)
+
                 tempTimeEnd = getCorrectTime(hour = event.hour, minute = event.minute) ?: tempTimeEnd
 
                 if (tempTimeEnd != null && tempTimeStart == null) {
@@ -252,8 +284,41 @@ class NewTaskViewModel(dataManager: DataManager) : MviProcessor<NewTaskState, Ne
                         timeStart = getCorrectTime(time = tempTimeStart),
                         timeEnd = getCorrectTime(time = tempTimeEnd),
                     ),
-                    timeStartPickerDialogData = getTimePickerDialogData(time = tempTimeStart),
-                    timeEndPickerDialogData = getTimePickerDialogData(time = tempTimeEnd),
+                    timeStartPickerDialogData = getTimePickerDialogData(time = tempTimeStart ?: timeStart),
+                    timeEndPickerDialogData = getTimePickerDialogData(time = tempTimeEnd ?: timeEnd),
+                )
+            }
+
+            is NewTaskEvent.RecallClear -> {
+                recallList = null
+
+                state.copy(
+                    dialogType = DialogType.DatePicker,
+                    recallPickerDialogData = state.recallPickerDialogData.copy(recallList),
+                    datePickerDialogData = state.datePickerDialogData.copy(
+                        recall = event.context.getString(RecallVariants.No.value),
+                    ),
+                )
+            }
+
+            is NewTaskEvent.Recall -> {
+                recallList = event.list
+
+                val recallTemp = RecallVariants.entries
+                    .filter { recallList?.contains(it) == true }
+                    .map { event.context.getString(it.value) }
+
+                val recall = when (recallTemp.isEmpty()) {
+                    true -> null
+                    else -> recallTemp.joinToString { it }
+                }
+
+                state.copy(
+                    dialogType = DialogType.DatePicker,
+                    recallPickerDialogData = state.recallPickerDialogData.copy(recallList),
+                    datePickerDialogData = state.datePickerDialogData.copy(
+                        recall = recall,
+                    ),
                 )
             }
         }
