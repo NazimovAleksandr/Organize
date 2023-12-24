@@ -64,7 +64,7 @@ internal fun SplashScreen(
     LaunchedEffect(
         key1 = Unit,
         block = {
-            delay(2000)
+            delay(1000)
             navigate.invoke(AppNavGraphImpl.BottomBarGraph.Tasks)
         },
     )

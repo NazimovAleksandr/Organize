@@ -27,6 +27,8 @@
     - [ ] Date Picker
       - [x] Calendar
       - [x] Time Picker (Start/End)
+        - [x] Dial
+        - [x] Input
       - [ ] Recall
       - [ ] Replay
 - [ ] Notes
